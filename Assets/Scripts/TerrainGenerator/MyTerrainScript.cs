@@ -33,7 +33,7 @@ public class MyTerrainScript : MonoBehaviour {
 
     private void generateMesh(int lod){
 		lod=myLODs.Length-lod;
-		meshFilter.mesh = MeshGenerator.generateMesh(NormalMapsScript.GenerateNoiseMap(100, 100, 10.3f), transform.position.x, transform.position.y, maxHieght, lod).createMesh();
+		meshFilter.mesh = MeshGenerator.generateMesh(NormalMapsScript.GenerateNoiseMap(100, 100, 10.3f, true), transform.position.x, transform.position.y, maxHieght, lod).createMesh();
 	}
 
 	// Update is called once per frame

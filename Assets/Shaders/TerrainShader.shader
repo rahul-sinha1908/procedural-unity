@@ -1,7 +1,5 @@
 ﻿Shader "Custom/TerrainShader" {
 	Properties {
-		_Color1 ("Color1", Color) = (1,1,0,1)
-		_Color2 ("Color2", Color) = (1,0,1,1)
 		_TexGrass ("Grass", 2D) = "white"{}
 		_TexRoads ("Roads", 2D) = "white"{}
 		_TexScale ("Texture Scale", float) = 1
@@ -24,18 +22,22 @@
 			float3 worldNormal;
 		};
 
-		fixed4 _Color1, _Color2;
 		sampler2D _TexGrass;
 		sampler2D _TexRoads;
 		float _TexScale;
-		
 
-		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-		// #pragma instancing_options assumeuniformscaling
-		UNITY_INSTANCING_CBUFFER_START(Props)
-			// put more per-instance properties here
-		UNITY_INSTANCING_CBUFFER_END
+		const int maxPixels = 100;
+		int actualSize;
+		int _init=0;
+		float4 roadTex[100];
+		float4 temp;
+		
+		float isNear(float3 pos, float4 r1, float4 r2){
+			float dist=(0-pos.x)*(0-pos.x)+(0-pos.z)*(0-pos.z);
+			if(dist<10*10)
+				return dist/100;
+			return -1;
+		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
@@ -46,19 +48,48 @@
 			// o.Smoothness = _Glossiness;
 			// o.Alpha = c.a;
 			// o.Albedo = _Color1;
-			if(IN.worldPos.x>10){
-				o.Albedo = _Color1;
-			}else{
-				o.Albedo = _Color2;
-			}
-
 			float3 blendAxes = abs(IN.worldNormal);
 			float3 scaleWorldPos = IN.worldPos/_TexScale;
 			blendAxes /= blendAxes.x+blendAxes.y+blendAxes.z;
-			float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
-			float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
-			float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
-			o.Albedo = blendX+blendY+blendZ;
+			if(_init==0){
+				float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
+				float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
+				float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
+				o.Albedo = blendX+blendY+blendZ;
+			}else{
+				bool b=false;
+				// for(int i=0;i<actualSize;i+=2){
+				// 	float myVal=isNear(IN.worldPos, roadTex[i], roadTex[i+1]);
+				// 	if(myVal!=-1){
+				// 		float3 blendX = tex2D(_TexRoads, scaleWorldPos.yz) * blendAxes.x;
+				// 		float3 blendY = tex2D(_TexRoads, scaleWorldPos.xz) * blendAxes.y;
+				// 		float3 blendZ = tex2D(_TexRoads, scaleWorldPos.xy) * blendAxes.z;
+				// 		o.Albedo = blendX+blendY+blendZ;
+				// 		b=true;
+				// 		break;
+				// 	}
+				// }
+				float myVal=isNear(IN.worldPos, temp, temp);
+				if(myVal!=-1){
+					float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
+					float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
+					float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
+					o.Albedo = blendX+blendY+blendZ;
+
+					blendX = tex2D(_TexRoads, scaleWorldPos.yz) * blendAxes.x;
+					blendY = tex2D(_TexRoads, scaleWorldPos.xz) * blendAxes.y;
+					blendZ = tex2D(_TexRoads, scaleWorldPos.xy) * blendAxes.z;
+
+					o.Albedo = o.Albedo*myVal + (blendX+blendY+blendZ)*(1-myVal);
+					b=true;
+				}
+				if(!b){
+					float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
+					float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
+					float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
+					o.Albedo = blendX+blendY+blendZ;
+				}
+			}
 		}
 		ENDCG
 	}

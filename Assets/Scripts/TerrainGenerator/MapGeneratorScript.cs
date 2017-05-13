@@ -28,8 +28,7 @@ public class MapGeneratorScript : MonoBehaviour {
 		generateMap(0,0);
 
 		// myMaterial.SetColor("_Color1",new Color(0,1,1,0.5f));
-		
-		
+		myMaterial.SetInt("_init",1);
 
 		process--;
 	}

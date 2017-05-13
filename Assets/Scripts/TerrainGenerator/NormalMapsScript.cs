@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class NormalMapsScript {
-	public static float[,] GenerateNoiseMap(int width, int height, float scale){
+	public static float[,] GenerateNoiseMap(int width, int height, float scale, bool fake){
 		float[,] normalMap=new float[width, height];
+		if(fake)
+			return normalMap;
+
+		
 		if(scale<=0)
 			scale=0.001f;
 		
