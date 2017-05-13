@@ -26,16 +26,12 @@ namespace MyGame{
 		public float[] myLODs;
 
 		public Vector3 myCurPos;
-
-		public List<MyRoad> myRoads;
-		public List<MyObjectCircle> myCircles;
-
+		public int width, height;
+		public float[,] myMap;
 		public MyGameScript(){
-			sizeTerrain=10;
+			sizeTerrain=12;
 			myCurPos=Vector3.zero;
-			myRoads=new List<MyRoad>();
-			myCircles=new List<MyObjectCircle>();
-			
+
 		}
 
 		public static MyGameScript getInstance(){

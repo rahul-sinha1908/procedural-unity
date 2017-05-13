@@ -29,7 +29,8 @@
 		const int maxPixels = 100;
 		int actualSize;
 		int _init=0;
-		float4 roadTex[100];
+		int _width=0;
+		int _height=0;
 		float4 temp;
 		
 		float isNear(float3 pos, float4 r1, float4 r2){
@@ -69,20 +70,33 @@
 				// 		break;
 				// 	}
 				// }
-				float myVal=isNear(IN.worldPos, temp, temp);
-				if(myVal!=-1){
-					float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
-					float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
-					float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
-					o.Albedo = blendX+blendY+blendZ;
+				float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
+				float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
+				float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
+				o.Albedo = blendX+blendY+blendZ;
 
-					blendX = tex2D(_TexRoads, scaleWorldPos.yz) * blendAxes.x;
-					blendY = tex2D(_TexRoads, scaleWorldPos.xz) * blendAxes.y;
-					blendZ = tex2D(_TexRoads, scaleWorldPos.xy) * blendAxes.z;
+				blendX = tex2D(_TexRoads, scaleWorldPos.yz) * blendAxes.x;
+				blendY = tex2D(_TexRoads, scaleWorldPos.xz) * blendAxes.y;
+				blendZ = tex2D(_TexRoads, scaleWorldPos.xy) * blendAxes.z;
 
-					o.Albedo = o.Albedo*myVal + (blendX+blendY+blendZ)*(1-myVal);
-					b=true;
-				}
+				float myVal= 1 - (IN.worldPos.y);
+				o.Albedo = o.Albedo*myVal + (blendX+blendY+blendZ)*(1-myVal);
+				b=true;
+				
+				// float myVal=isNear(IN.worldPos, temp, temp);
+				// if(myVal!=-1){
+				// 	float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
+				// 	float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;
+				// 	float3 blendZ = tex2D(_TexGrass, scaleWorldPos.xy) * blendAxes.z;
+				// 	o.Albedo = blendX+blendY+blendZ;
+
+				// 	blendX = tex2D(_TexRoads, scaleWorldPos.yz) * blendAxes.x;
+				// 	blendY = tex2D(_TexRoads, scaleWorldPos.xz) * blendAxes.y;
+				// 	blendZ = tex2D(_TexRoads, scaleWorldPos.xy) * blendAxes.z;
+
+				// 	o.Albedo = o.Albedo*myVal + (blendX+blendY+blendZ)*(1-myVal);
+				// 	b=true;
+				// }
 				if(!b){
 					float3 blendX = tex2D(_TexGrass, scaleWorldPos.yz) * blendAxes.x;
 					float3 blendY = tex2D(_TexGrass, scaleWorldPos.xz) * blendAxes.y;

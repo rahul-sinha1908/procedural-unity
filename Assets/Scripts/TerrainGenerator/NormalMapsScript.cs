@@ -8,10 +8,8 @@ public static class NormalMapsScript {
 		if(fake)
 			return normalMap;
 
-		
 		if(scale<=0)
 			scale=0.001f;
-		
 
 		for(int y=0; y<height; y++){
 			for(int x=0; x<width; x++){
