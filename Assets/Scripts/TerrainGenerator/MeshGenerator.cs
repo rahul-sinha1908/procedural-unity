@@ -5,7 +5,10 @@ using UnityEngine;
 namespace MyTerrainSpace{
 	public static class MeshGenerator {
 
-		public static MyMeshData generateMesh(float[,] normalMaps, float cenX, float cenY, float heightMax){
+		public static MyMeshData generateMesh(float[,] normalMaps, float cenX, float cenY, float heightMax, int lod){
+
+			//TODO Do the LOD component
+			
 			int width=normalMaps.GetLength(0);
 			int height=normalMaps.GetLength(1);
 
@@ -21,7 +24,6 @@ namespace MyTerrainSpace{
 			}
 			return meshData;
 		}
-
 	}
 
 	public class MyMeshData{
